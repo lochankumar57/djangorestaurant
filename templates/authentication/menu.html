@@ -1,0 +1,670 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Menu</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap');
+
+        * {
+            box-sizing: border-box;
+            border: none;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            text-transform: capitalize;
+            transition: all 0.2s linear;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        footer {
+
+            background-color: #333;
+            color: #fff;
+            padding: 1em 0;
+            text-align: center;
+            border-radius: 10px;
+            margin: 0, auto;
+        }
+
+        footer p {
+            font-size: 20px
+        }
+
+        .logo {
+            font-size: 44px;
+            position: relative;
+            left: -100%;
+            animation: slideTitle 2s forwards;
+        }
+
+        nav {
+            display: flex;
+        }
+
+        nav ul {
+            margin: 10px;
+            list-style: none;
+            display: flex;
+        }
+
+        nav li {
+            margin: 15px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+            transition: 0.4s;
+        }
+
+        @media only screen and (max-width: 760px) {
+            .hamburger {
+                display: flex;
+                flex-direction: column;
+                cursor: pointer;
+                transition: transform 0.4s ease-in-out;
+            }
+
+            nav {
+                display: none;
+                position: absolute;
+                top: 60px;
+                left: 8px;
+                width: 95.47%;
+                background-color: #333;
+                z-index: 1;
+                border-radius: 10px;
+            }
+
+            nav.show {
+                display: flex;
+            }
+
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav li {
+                margin: 10px 0;
+            }
+
+            .hamburger.active div:nth-child(1) {
+                transform: rotate(-45deg) translate(-9px, 9px);
+            }
+
+            .hamburger.active div:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active div:nth-child(3) {
+                transform: rotate(45deg) translate(-9px, -9px);
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+        }
+
+        .menu-item {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            /* Add this line to create a flex container */
+        }
+
+        .menu-item h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .menu-item p {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .menu-item .rating {
+            color: #f39c12;
+        }
+
+        .menu-item .price {
+            font-weight: bold;
+        }
+
+        .menu-item img {
+            margin-left: auto;
+            /* Push the image to the right */
+            max-width: 130px;
+            /* Adjust the image size as needed */
+            border-radius: 10px;
+            height: 150px;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-bar {
+            margin-right: 5px;
+        }
+
+        .search-bar input {
+            width: 140px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        .search-bar button {
+            padding: 10px;
+            border: none;
+            background-color: #333;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .filter select {
+            padding: 10px;
+            width: 100px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+
+        .cart {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+
+            top: 0;
+            right: 0;
+            border-radius: 10px;
+            align-items: center;
+        }
+
+
+        .cart-item {
+            border-bottom: 1px solid #555;
+            padding: 0.5em;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cartbutton {
+            padding: 14px;
+            border: none;
+            background-color: #333;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .order {
+            padding: 12px;
+            width: 200px;
+            border: none;
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            border-radius: 10px;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        .center {
+            margin: 0;
+            position: absolute;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes slideTitle {
+            to {
+                left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">KHAN FOOD COURT</div>
+        <div class="hamburger" onclick="toggleNav()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <nav>
+            <ul>
+                {% if user.is_authenticated %}
+                <li><a href="/home">Home</a></li>
+                <li><a href="/manage">{{ username }}</a></li>
+                {% else %}
+                <li><a href="/home">Home</a></li>
+                <li><a href="/login">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <br>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" placeholder="Search...">
+            <button class="button" type="submit">Search</button>
+        </div>
+    </div>
+
+
+
+
+    <div class="menu-item">
+        <div>
+            <h3>Veg Manchurian</h3>
+            <p>Tomato sauce, mozzarella, fresh basil</p>
+            <!-- <p class="rating">Rating: <?php 
+                $query="select rating from ratings where item_id='Veg Manchuria'";
+                $result = mysqli_query($con,$query);
+                $r = mysqli_fetch_assoc($result);
+                echo "$r[rating]";
+            ?> Stars</p> -->
+            <p class="price">Price : ₹120</p>
+            {% for rating in items %}
+                {% if rating.id == 1 %}
+                <p class="rating">Rating : {{ rating.rating|floatformat:"2"  }} stars</p>
+                {% endif %} 
+            {% endfor %}
+            {% if user.is_authenticated %}<button class="cartbutton"
+                onclick="addToCart('veg Manchurian', 120.00); addToCart1('veg Manchurian',120.00);">Add to Cart</button>
+            {% endif %}
+        </div>
+        <img src="{% static 'product2.jfif' %}" alt="Margherita Pizza">
+    </div>
+
+
+    <div class="menu-item">
+        <div>
+            <h3>Chicken Manchurian</h3>
+            <p>Tomato sauce, mozzarella, Chicken</p>
+            <!-- <p class="rating">Rating: <?php 
+                $query="select rating from ratings where item_id='Chicken Manchuria'";
+                $result = mysqli_query($con,$query);
+                $r = mysqli_fetch_assoc($result);
+                echo "$r[rating]";
+            ?> Stars</p>  -->
+            <p class="price">Price : ₹120</p>
+            {% for rating in items %}
+                {% if rating.id == 2 %}
+                <p class="rating">Rating : {{ rating.rating|floatformat:"2"  }} stars</p>
+                {% endif %} 
+            {% endfor %}
+           
+            {% if user.is_authenticated %}<button class="cartbutton"
+                onclick="addToCart('Chicken Manchurian', 120.00); addToCart1('Chicken Manchurian',120.00);">Add to
+                Cart</button>
+            {% endif %}
+        </div>
+        <img src="{% static 'product3.jfif' %}" alt="Margherita Pizza">
+    </div>
+    <div class="menu-item">
+        <div>
+            <h3>Parota</h3>
+            <p>Tomato sauce, mozzarella, Chicken</p>
+            <!-- <p class="rating">Rating: <?php 
+                $query="select rating from ratings where item_id='parota'";
+                $result = mysqli_query($con,$query);
+                $r = mysqli_fetch_assoc($result);
+                echo "$r[rating]";
+            ?> Stars</p>             -->
+            <p class="price">price : ₹40 per plate (per plate contains 2 parota)</p>
+            {% for rating in items %}
+                {% if rating.id == 3 %}
+                <p class="rating">Rating : {{ rating.rating|floatformat:"2"  }} stars</p>
+                {% endif %} 
+            {% endfor %}
+            {% if user.is_authenticated %}<button class="cartbutton"
+                onclick="addToCart('Parota', 40.00); addToCart1('Parota',40.00);">Add to Cart</button>
+            {% endif %}
+        </div>
+        <img src="{% static 'product4.jfif' %}" alt="Margherita Pizza">
+    </div>
+    <div class="menu-item">
+        <div>
+            <h3>Dum-Biryani</h3>
+            <p>Tomato sauce, mozzarella, Chicken</p>
+            <!-- <p class="rating">Rating: <?php 
+                $query="select rating from ratings where item_id='Dum-Biryani'";
+                $result = mysqli_query($con,$query);
+                $r = mysqli_fetch_assoc($result);
+                echo "$r[rating]";
+            ?> Stars</p>   -->
+            <p class="price">price : ₹100 </p>
+            {% for rating in items %}
+                {% if rating.id == 4 %}
+                <p class="rating">Rating : {{ rating.rating|floatformat:"2"  }} stars</p>
+                {% endif %} 
+            {% endfor %}
+            {% if user.is_authenticated %}<button class="cartbutton"
+                onclick="addToCart('Dum-Biryani', 100.00); addToCart1('Dum-Biryani',100.00);">Add to Cart</button>
+            {% endif %}
+        </div>
+        <img src="{% static 'images/product5.jpg' %}" alt="Margherita Pizza">
+    </div>
+    <div class="menu-item">
+        <div>
+            <h3>Fry Piece Biryani</h3>
+            <p>Tomato sauce, mozzarella, Chicken</p>
+            <!-- <p class="rating">Rating: <?php 
+                $query="select rating from ratings where item_id='Fry Piece Biryani'";
+                $result = mysqli_query($con,$query);
+                $r = mysqli_fetch_assoc($result);
+                echo "$r[rating]";
+            ?> Stars</p>   -->
+            <p class="price">price : ₹100</p>
+            {% for rating in items %}
+                {% if rating.id == 5 %}
+                <p class="rating">Rating : {{ rating.rating|floatformat:"2"  }} stars</p>
+                {% endif %} 
+            {% endfor %}
+            {% if user.is_authenticated %}<button class="cartbutton"
+                onclick="addToCart('Fry Piece Biryani', 100.00); addToCart1('Fry Piece Biryani',100.00);">Add to
+                Cart</button>
+            {% endif %}
+        </div>
+        <img src="{% static 'images/product6.jpg' %}" alt="Margherita Pizza">
+    </div>
+    <div class="menu-item" data-category="Veg">
+        <div>
+            <h3>Veg Fried Rice</h3>
+            <p>Tomato sauce, mozzarella, Chicken</p>
+            <!-- <p class="rating">Rating: <?php 
+                $query="select rating from ratings where item_id='Veg Fried Rice'";
+                $result = mysqli_query($con,$query);
+                $r = mysqli_fetch_assoc($result);
+                echo "$r[rating]";
+            ?> Stars</p>   -->
+            <p class="price">price : ₹120</p>
+            {% for rating in items %}
+                {% if rating.id == 6 %}
+                <p class="rating">Rating : {{ rating.rating|floatformat:"2"  }} stars</p>
+                {% endif %} 
+            {% endfor %}
+            {% if user.is_authenticated %}
+            <button class="cartbutton"
+                onclick="addToCart('Veg Fried Rice', 120.00); addToCart1('Veg Fried Rice',120.00);">Add to Cart</button>
+            {% endif %}
+        </div>
+        <img src="{% static 'images/product7.jpg' %}" alt="Margherita Pizza">
+    </div>
+    <div class="menu-item">
+        <div>
+            <h3>Chicken Fried Rice</h3>
+            <p>Tomato sauce, mozzarella, Chicken</p>
+            <!-- <p class="rating">Rating: <?php 
+                $query="select rating from ratings where item_id='Chicken Fried Rice'";
+                $result = mysqli_query($con,$query);
+                $r = mysqli_fetch_assoc($result);
+                echo "$r[rating]";
+            ?> Stars</p>   -->
+            <p class="price">price : ₹120</p>
+            {% for rating in items %}
+                {% if rating.id == 7 %}
+                <p class="rating">Rating : {{ rating.rating|floatformat:"2"  }} stars</p>
+                {% endif %} 
+            {% endfor %}
+            {% if user.is_authenticated %}<button class="cartbutton"
+                onclick="addToCart('Chicken Fried Rice', 120.00); addToCart1('Chicken Fried Rice',120.00);">Add to
+                Cart</button>
+            {% endif %}
+        </div>
+        <img src="{% static 'images/product8.jpg' %}" alt="Margherita Pizza">
+    </div>
+    <div class="menu-item" data-category="Veg">
+        <div>
+            <h3>Veg Roll</h3>
+            <p>Tomato sauce, mozzarella, Chicken</p>
+            <!-- <p class="rating">Rating: <?php 
+                $query="select rating from ratings where item_id='Veg Roll'";
+                $result = mysqli_query($con,$query);
+                $r = mysqli_fetch_assoc($result);
+                echo "$r[rating]";
+            ?> Stars</p>   -->
+            <p class="price">price : ₹30</p>
+            {% for rating in items %}
+                {% if rating.id == 8 %}
+                <p class="rating">Rating : {{ rating.rating|floatformat:"2"  }} stars</p>
+                {% endif %} 
+            {% endfor %}
+            {% if user.is_authenticated %}<button class="cartbutton"
+                onclick="addToCart('Veg Roll', 30.00); addToCart1('Veg Roll',30.00);">Add to Cart</button>
+            {% endif %}
+        </div>
+        <img src="{% static 'images/product9.jpg' %}" alt="Margherita Pizza">
+    </div>
+    <div class="menu-item">
+        <div>
+            <h3>Chicken Roll</h3>
+            <p>Tomato sauce, mozzarella, Chicken</p>
+            <!-- <p class="rating">Rating: <?php 
+                $query="select rating from ratings where item_id='Chicken Roll'";
+                $result = mysqli_query($con,$query);
+                $r = mysqli_fetch_assoc($result);
+                echo "$r[rating]";
+            ?> Stars</p>   -->
+            <p class="price">price : ₹50</p>
+            {% for rating in items %}
+                {% if rating.id == 9 %}
+                <p class="rating">Rating : {{ rating.rating|floatformat:"2"  }} stars</p>
+                {% endif %} 
+            {% endfor %}
+            {% if user.is_authenticated %}<button class="cartbutton"
+                onclick="addToCart('Chicken Roll', 50.00); addToCart1('Chicken Roll',50.00);">Add to Cart</button>
+            {% endif %}
+        </div>
+        <img src="{% static 'images/product10.jpg' %}" alt="Margherita Pizza">
+    </div>
+    <div class="menu-item">
+        <div>
+            <h3>Chicken Soupe</h3>
+            <p>Tomato sauce, mozzarella, Chicken</p>
+            <!-- <p class="rating">Rating: <?php 
+                $query="select rating from ratings where item_id='Chicken Soupe'";
+                $result = mysqli_query($con,$query);
+                $r = mysqli_fetch_assoc($result);
+                echo "$r[rating]";
+            ?> Stars</p>               -->
+            <p class="price">price : ₹30</p>
+            {% for rating in items %}
+                {% if rating.id == 10 %}
+                <p class="rating">Rating : {{ rating.rating|floatformat:"2"  }} stars</p>
+                {% endif %} 
+            {% endfor %}
+            {% if user.is_authenticated %}<button class="cartbutton"
+                onclick="addToCart('Chicken Soupe', 30.00); addToCart1('Chicken Soupe',30.00);">Add to Cart</button>
+            {% endif %}
+        </div>
+        <img src="{% static 'images/product11.jpg' %}" alt="Margherita Pizza">
+    </div>
+    <div class="menu-item" data-category="Veg">
+        <div>
+            <h3>Veg Soupe</h3>
+            <p>Tomato sauce, mozzarella, Chicken</p>
+            <!-- <p class="rating">Rating: <?php 
+                $query="select rating from ratings where item_id='Veg Soupe'";
+                $result = mysqli_query($con,$query);
+                $r = mysqli_fetch_assoc($result);
+                echo "$r[rating]";
+            ?> Stars</p>               -->
+            <p class="price">price : ₹10</p>
+            {% for rating in items %}
+                {% if rating.id == 11 %}
+                <p class="rating">Rating : {{ rating.rating|floatformat:"2"  }} stars</p>
+                {% endif %} 
+            {% endfor %}
+            {% if user.is_authenticated %}<button class="cartbutton"
+                onclick="addToCart('Veg Soupe', 10.00); addToCart1('Veg Soupe',10.00);">Add to Cart</button>
+            {% endif %}
+        </div>
+        <img src="{% static 'images/product12.jpg' %}" alt="Margherita Pizza">
+    </div>
+    {% if user.is_authenticated %}<div class="cart">
+        <h2>Shopping Cart</h2>
+        <div id="cartItems"></div>
+        <p>Total: ₹<span id="cartTotal"></span></p>
+        <hr>
+        <br>
+        <br>
+        <div class="center">
+
+            <form id="cart-form" action="/payments" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="cart" id="cart">
+                <input type="submit" class="order" value="Proceed to payments" name="submit">
+            </form>
+
+        </div>
+
+        <br><br>
+    </div>{% endif %}
+    <br>
+    <footer>
+        <p>© 2023 My Online Store. All rights reserved.</p>
+    </footer>
+    <script>
+        let cart = [];
+
+        function addToCart(productName, price) {
+            cart.push({ productName, price });
+            updateCart();
+
+
+        }
+
+        function updateCart() {
+            const cartItemsElement = document.getElementById('cartItems');
+            const cartTotalElement = document.getElementById('cartTotal');
+
+            cartItemsElement.innerHTML = '';
+            let total = 0;
+
+            cart.forEach(item => {
+                const cartItemElement = document.createElement('div');
+                cartItemElement.classList.add('cart-item');
+                cartItemElement.innerHTML = `<span>${item.productName}</span><span>₹${item.price.toFixed(2)}</span>`;
+                cartItemsElement.appendChild(cartItemElement);
+
+                total += item.price;
+            });
+
+            cartTotalElement.textContent = total.toFixed(2);
+
+            // Send cart data to save_items.php using AJAX
+
+        }
+
+        function addToCart1(item, price) {
+            var cartInput = document.getElementById('cart');
+            if (cartInput.value === '') {
+                cartInput.value = item + ':' + price;
+            } else {
+                cartInput.value += ',' + item + ':' + price;
+            }
+        }
+    </script>
+    <script>
+        // JavaScript for search functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.querySelector('.search-bar input');
+            const menuItems = document.querySelectorAll('.menu-item');
+
+            searchInput.addEventListener('input', function (event) {
+                const searchTerm = event.target.value.trim().toLowerCase();
+
+                menuItems.forEach(function (menuItem) {
+                    const menuItemName = menuItem.querySelector('h3').textContent.toLowerCase();
+                    if (menuItemName.includes(searchTerm)) {
+                        menuItem.style.display = 'flex';
+                    } else {
+                        menuItem.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // JavaScript for filter functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterSelect = document.querySelector('.filter select');
+            const menuItems = document.querySelectorAll('.menu-item');
+
+            filterSelect.addEventListener('change', function (event) {
+                const selectedCategory = event.target.value.toLowerCase();
+
+                menuItems.forEach(function (menuItem) {
+                    const menuItemCategory = menuItem.querySelector('.category').textContent.toLowerCase();
+                    if (selectedCategory === 'all' || menuItemCategory === selectedCategory) {
+                        menuItem.style.display = 'flex';
+                    } else {
+                        menuItem.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+
+    </script>
+
+
+
+
+
+    <script>
+        function toggleNav() {
+            var nav = document.querySelector('nav');
+            var hamburger = document.querySelector('.hamburger');
+            hamburger.classList.toggle('active');
+            nav.classList.toggle('show');
+        }
+    </script>
+
+</body>
+
+</html>
